@@ -1,6 +1,7 @@
 from torch import no_grad, max
 def train(model, dataloader, loss_fn, optimizer, epochs, device, print_logs=False):
   loss_list, accuracy_list = [], []
+  model.train()
   for epoch in range(epochs):
     mini_batch_loss, total_loss, correct, size = 0, 0, 0, len(dataloader.dataset)
     for i, (X, y) in enumerate(dataloader, start=0):
@@ -39,6 +40,7 @@ def train(model, dataloader, loss_fn, optimizer, epochs, device, print_logs=Fals
 
 def test(model, dataloader, device, print_logs=False):
   correct, total = 0, len(dataloader.dataset)
+  model.eval()
   with no_grad():
     for (X, y) in dataloader:
       X, y = X.to(device), y.to(device)
