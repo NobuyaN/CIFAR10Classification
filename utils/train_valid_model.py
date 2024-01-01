@@ -6,6 +6,8 @@ def train(model, dataloader, loss_fn, optimizer, device):
   model.train()
   for i, (X, y) in enumerate(dataloader, start=0):
     X, y = X.to(device), y.to(device)
+    print(X.shape)
+    print(y.shape)
     optimizer.zero_grad()
 
     pred = model(X)
