@@ -1,16 +1,15 @@
 from torch import no_grad, max
-def train(model, dataloader, loss_fn, optimizer, device):
+def train(model, dataloader, loss_fn, optimizer, device, log=False):
   size = len(dataloader.dataset)
   mini_batch_loss, total_loss, correct = 0, 0, 0
 
   model.train()
   for i, (X, y) in enumerate(dataloader, start=0):
     X, y = X.to(device), y.to(device)
-    print(X.shape)
-    print(y.shape)
     optimizer.zero_grad()
 
     pred = model(X)
+
     loss = loss_fn(pred, y)
     loss.backward()
     optimizer.step()
@@ -19,6 +18,13 @@ def train(model, dataloader, loss_fn, optimizer, device):
     total_loss += loss.item()
     _, pred_index = max(pred, dim=1)
     correct += (pred_index == y).sum().item()
+    if log:
+      print("y", y)
+      print("y shape", y.shape)
+      print(f"pred", pred)
+      print("pred shape", pred.shape)
+      print("pred index", pred_index)
+      print("pred index shape", pred_index.shape)
 
     if i % 4000 == 3999:
       loss, current = loss.item(), (i+1)*len(X)
@@ -28,7 +34,7 @@ def train(model, dataloader, loss_fn, optimizer, device):
   train_accuracy = correct / size
   return train_loss, train_accuracy
 
-def valid(model, dataloader, loss_fn, device):
+def valid(model, dataloader, loss_fn, device, log=False):
   size = len(dataloader.dataset)
   mini_batch_loss, total_loss, correct = 0, 0, 0
 
@@ -44,6 +50,14 @@ def valid(model, dataloader, loss_fn, device):
       total_loss += loss.item()
       _, pred_index = max(pred, dim=1)
       correct += (pred_index == y).sum().item()
+
+      if log:
+        print("y", y)
+        print("y shape", y.shape)
+        print(f"pred", pred)
+        print("pred shape", pred.shape)
+        print("pred index", pred_index)
+        print("pred index shape", pred_index.shape)
 
   valid_loss = total_loss / size
   valid_accuracy = correct / size
